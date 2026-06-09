@@ -48,4 +48,12 @@ public class Title {
 	public String	getTitle() {
 		return this.title;
 	}
+
+	@Override
+	public String	toString()
+	{
+		return String.format("Title{ isbn=%s title=%s edition_number=%d copyright=%d }", this.isbn, this.title, this.editionNumber, this.copyright );
+	}
+
+	
 }

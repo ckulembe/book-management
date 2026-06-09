@@ -53,6 +53,7 @@ public class AuthorRepositoryImplement implements AuthorRepository {
 						resultSet.getString( "lastname" )
 				));
 
+			resultSet.close();
 			return Optional.empty();
 		}
 		catch ( SQLException exception )
@@ -115,8 +116,7 @@ public class AuthorRepositoryImplement implements AuthorRepository {
 						resultSet.getString( "lastname" )
 					)
 				);
-		
-		
+
 			resultSet.close();
 			return authorList;
 		}

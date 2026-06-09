@@ -8,7 +8,7 @@ import	exception.NotFoundException;
 
 public interface AuthorService {
 
-	void	addAuthor(String firstname, String lastname ) throws DatabaseException;
+	void	addAuthor( Author author ) throws DatabaseException;
 	Author	getById( int id ) throws DatabaseException, NotFoundException;
 	List<Author>	getAll() throws	DatabaseException;
 	List<Author>	getByName( String firstname, String lastname ) throws DatabaseException, NotFoundException;

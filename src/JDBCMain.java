@@ -1,41 +1,168 @@
 import	java.sql.Connection;
+import java.util.List;
 
 import	db.ConnectionDB;
-import	exception.DatabaseException;
-import	exception.NotFoundException;
-import	repository.AuthorRepository;
-import	repository.implemetation.AuthorRepositoryImplement;
-import	service.AuthorService;
-import	service.implementation.AuthorServiceImplement;
+import model.Author;
+import  model.Title;
+import service.AuthorService;
+import service.AuthorTitleService;
+import	service.TitleService;
+import repository.AuthorRepository;
+import repository.AuthorTitleRepository;
+import	repository.TitleRepository;
+import service.implementation.AuthorServiceImplement;
+import service.implementation.AuthorTitleServiceImplement;
+import	service.implementation.TitleServiceImplement;
+import repository.implemetation.AuthorRepositoryImplement;
+import repository.implemetation.AuthorTitleRepositoryImplement;
+import	repository.implemetation.TitleRepositoryImplement;
 
 
-class JDBCMain
-{
-	public static void main(String[] args)
-	{
-		try
-		{
-			Connection connect = ConnectionDB.getConnection();
+public class JDBCMain {
 
-			AuthorRepository	repository	= new AuthorRepositoryImplement( connect );
-			AuthorService		service		= new AuthorServiceImplement( repository ); 
+    public static void main(String[] args) {
 
-			// service.addAuthor("Tudo", "Todo");
+        try {
+            Connection connection = ConnectionDB.getConnection();
 
-			
-			// service.deleteAuthor( 17 );
-			// service.deleteAuthor( 18 );
-			
+            AuthorRepository authorRepository =
+                new AuthorRepositoryImplement(connection);
 
-			service.updateAuthor(9, "Domingos", "Sabino");
-			
-			service.getAll().forEach(System.out::println);
+            TitleRepository titleRepository =
+                new TitleRepositoryImplement(connection);
 
+            AuthorTitleRepository authorTitleRepository =
+                new AuthorTitleRepositoryImplement(connection);
 
-		} // Os métodos close dos objectos AutoCloseable são chamados agora
-		catch( DatabaseException | NotFoundException  e )
-		{
-			System.err.println("Erro: " + e.getMessage());
-		}
-	}
+            AuthorService authorService =
+                new AuthorServiceImplement(authorRepository);
+
+            TitleService titleService =
+                new TitleServiceImplement(titleRepository);
+
+            AuthorTitleService authorTitleService =
+                new AuthorTitleServiceImplement(
+                    authorRepository,
+                    titleRepository,
+                    authorTitleRepository
+                );
+
+            // testAuthorCRUD(authorService);
+
+            // testTitleCRUD(titleService);
+
+            testRelationship(
+                authorService,
+                titleService,
+                authorTitleService
+            );
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // private static void testAuthorCRUD(
+    //     AuthorService authorService
+    // ) throws Exception {
+
+    //     System.out.println("\n===== AUTHOR TEST =====");
+
+    //     Author author =
+    //         new Author(
+    //             "Celso",
+    //             "Oliveira"
+    //         );
+
+    //     authorService.addAuthor(author);
+
+    //     System.out.println("Author inserted");
+
+    //     List<Author> authors =
+    //         authorService.getAll();
+
+    //     for (Author current : authors)
+    //         System.out.println(current);
+    // }
+
+    // private static void testTitleCRUD(
+    //     TitleService titleService
+    // ) throws Exception {
+
+    //     System.out.println("\n===== TITLE TEST =====");
+
+    //     Title title =
+    //         new Title(
+    //             "9788543013732",
+    //             "C++, como programar",
+    //             2,
+    //             2006
+    //         );
+
+    //     titleService.addTitle(title);
+
+    //     System.out.println("Title inserted");
+
+    //     Title result =
+    //         titleService.getById(
+    //             "9788543013732"
+    //         );
+
+    //     System.out.println(result);
+    // }
+
+    private static void testRelationship(
+        AuthorService authorService,
+        TitleService titleService,
+        AuthorTitleService authorTitleService
+    ) throws Exception {
+
+        System.out.println(
+            "\n===== RELATION TEST ====="
+        );
+
+        Author author =
+            authorService
+                .getByName("Paul", "Deitel")
+                .get(0);
+
+        Title title =
+            titleService.getById(
+                "9788543013732"
+            );
+
+        authorTitleService.assignAuthorToTitle(
+            author.getId(),
+            title.getIsbn()
+        );
+
+        System.out.println(
+            "Relation created"
+        );
+
+        List<Title> titles =
+            authorTitleService.getTitlesByAuthor(
+                author.getId()
+            );
+
+        System.out.println(
+            "\nBooks by author:"
+        );
+
+        for (Title current : titles)
+            System.out.println(current);
+
+        List<Author> authors =
+            authorTitleService.getAuthorsByTitle(
+                title.getIsbn()
+            );
+
+        System.out.println(
+            "\nAuthors of title:"
+        );
+
+        for (Author current : authors)
+            System.out.println(current);
+
+    }
 }

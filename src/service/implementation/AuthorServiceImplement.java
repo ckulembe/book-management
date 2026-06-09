@@ -17,20 +17,16 @@ public class AuthorServiceImplement implements AuthorService {
 		this.repository = authorRepository;
 	}
 
-	public void	addAuthor(String firstname, String lastname ) throws DatabaseException {
+	public void	addAuthor( Author author ) throws DatabaseException {
 		
-		if ( firstname == null || firstname.isBlank() )
+		if ( author.getFirstName() == null || author.getFirstName().isBlank() )
 			throw new IllegalArgumentException("Nome obrigatório.");
-		if ( lastname == null || lastname.isBlank() )
+		if ( author.getLastName() == null || author.getLastName().isBlank() )
 			throw new IllegalArgumentException("Sobrenome obrigatório.");
 
-		List<Author>	authorlist = repository.findByName(firstname, lastname);
+		List<Author>	authorlist = repository.findByName( author.getFirstName(), author.getLastName() );
 		if ( !authorlist.isEmpty() )
 			throw new IllegalStateException( "Author já existe." );
-
-		Author	author = new Author();
-		author.setFirstName(firstname);
-		author.setLastName(lastname);
 
 		this.repository.save(author);
 	}

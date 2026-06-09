@@ -15,6 +15,13 @@ public class Author
 		this.setLastName(lastname);
 	}
 
+	public	Author( String firstname, String lastname )
+	{
+		this.setFirstName(firstname);
+		this.setLastName(lastname);
+	}
+
+
 	public void	setId( int id ) {
 		this.id = id;
 	}

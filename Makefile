@@ -1,25 +1,18 @@
-
-
 JAVA = java
 JAVAC = javac
 
-MODEL = model/
-MODELSRC = $(MODEL)/Author.java \
-		$(MODEL)/Title.java \
-		$(MODEL)/AuthorIsbn.java
-SRC = JDBCMain.java BlankException.java ConnectionDB.java $(MODELSRC)
-CLASS = $(SRC:.java=.class)
+SRC = src
+DRIVER = postgresql-42.7.11.jar
 
-DRIVER = ./postgresql-42.7.11.jar
-RM = rm -f
-
-run: class
-	$(JAVA) -cp .:$(DRIVER) JDBCMain
+SOURCES = $(shell find $(SRC) -name "*.java")
 
 class:
-	$(JAVAC) -cp .:$(DRIVER) JDBCMain.java
+	$(JAVAC) -cp .:$(DRIVER) $(SOURCES)
+
+run: class
+	$(JAVA) -cp .:$(DRIVER):$(SRC) JDBCMain
 
 clean:
-	$(RM) $(CLASS)
+	find $(SRC) -name "*.class" -delete
 
-.PHONY: run class clean
+.PHONY: class run clean

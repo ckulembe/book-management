@@ -9,6 +9,7 @@ import	model.Author;
 
 public interface AuthorTitleService {
 	
+	void	createTitleWithAuthors( Title title, List<Integer> authorIds ) throws DatabaseException, NotFoundException;
 	void	assignAuthorToTitle( int authorId, String isbn ) throws DatabaseException, NotFoundException;
 	void	removeAuthorFromTitle( int authorId, String isbn ) throws DatabaseException;
 	List<Title>	getTitlesByAuthor( int authorId ) throws DatabaseException, NotFoundException;

@@ -35,7 +35,7 @@ public class TitleRepositoryImplement implements TitleRepository {
 		}
 		catch ( SQLException e )
 		{
-			throw new DatabaseException( "" );
+			throw new DatabaseException( e.getMessage() );
 		}
 	}
 

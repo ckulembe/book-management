@@ -1,4 +1,5 @@
 import	java.sql.Connection;
+import java.util.LinkedList;
 import java.util.List;
 
 import	db.ConnectionDB;
@@ -42,6 +43,7 @@ public class JDBCMain {
 
             AuthorTitleService authorTitleService =
                 new AuthorTitleServiceImplement(
+                    connection,
                     authorRepository,
                     titleRepository,
                     authorTitleRepository
@@ -121,47 +123,27 @@ public class JDBCMain {
             "\n===== RELATION TEST ====="
         );
 
-        Author author =
-            authorService
-                .getByName("Paul", "Deitel")
-                .get(0);
-
-        Title title =
-            titleService.getById(
-                "9788543013732"
+        Title title = new Title(
+                "9788534614597",
+                "C#: como programar",
+                11,
+                2003
             );
 
-        authorTitleService.assignAuthorToTitle(
-            author.getId(),
-            title.getIsbn()
-        );
-
-        System.out.println(
-            "Relation created"
-        );
-
-        List<Title> titles =
-            authorTitleService.getTitlesByAuthor(
-                author.getId()
-            );
-
-        System.out.println(
-            "\nBooks by author:"
-        );
-
-        for (Title current : titles)
-            System.out.println(current);
+        // List<Integer>   list = new LinkedList<Integer>(); 
+        // list.add( 1 ) ;
+        // list.add( 2 );
+        // list.add( 3 );
+        // authorTitleService.createTitleWithAuthors( title, list );
 
         List<Author> authors =
-            authorTitleService.getAuthorsByTitle(
-                title.getIsbn()
-            );
+            authorTitleService.getAuthorsByTitle( title.getIsbn() );
 
         System.out.println(
             "\nAuthors of title:"
         );
 
-        for (Author current : authors)
+        for (Author current : authors )
             System.out.println(current);
 
     }

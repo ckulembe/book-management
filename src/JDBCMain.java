@@ -123,12 +123,12 @@ public class JDBCMain {
             "\n===== RELATION TEST ====="
         );
 
-        Title title = new Title(
-                "9788534614597",
-                "C#: como programar",
-                11,
-                2003
-            );
+        // Title title = new Title(
+        //         "9788534614597",
+        //         "C#: como programar",
+        //         11,
+        //         2003
+        //     );
 
         // List<Integer>   list = new LinkedList<Integer>(); 
         // list.add( 1 ) ;
@@ -136,15 +136,17 @@ public class JDBCMain {
         // list.add( 3 );
         // authorTitleService.createTitleWithAuthors( title, list );
 
-        List<Author> authors =
-            authorTitleService.getAuthorsByTitle( title.getIsbn() );
+        // List<Author> authors =
+        //     authorTitleService.getAuthorsByTitle( title.getIsbn() );
 
-        System.out.println(
-            "\nAuthors of title:"
-        );
+        // System.out.println(
+        //     "\nAuthors of title:"
+        // );
 
-        for (Author current : authors )
-            System.out.println(current);
+        // for (Author current : authors )
+        //     System.out.println(current);
+
+        authorTitleService.deleteAuthorCompletely(1);
 
     }
 }

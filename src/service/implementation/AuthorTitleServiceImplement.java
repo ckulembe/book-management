@@ -87,6 +87,18 @@ public	class	AuthorTitleServiceImplement implements AuthorTitleService
 		return listOfAuthor;
 	}
 
+	private	final void	rollbackQuickly()
+	{
+		try
+		{
+			connection.rollback();
+		}
+		catch ( SQLException rollbackException )
+		{
+			rollbackException.printStackTrace();
+		}
+	}
+
 	public void	createTitleWithAuthors( Title title, List<Integer> authorIds ) throws DatabaseException, NotFoundException
 	{
 		if ( title == null )
@@ -106,31 +118,21 @@ public	class	AuthorTitleServiceImplement implements AuthorTitleService
 			}
 			connection.commit();
 		}
-		catch( DatabaseException e )
+		catch( DatabaseException | NotFoundException exception )
+		{
+			rollbackQuickly();
+			throw exception;
+		}
+		catch( SQLException sqlException )
 		{
 			rollbackQuickly();
 			throw new DatabaseException(
-				e.getMessage()
-			);
-		}
-		catch( NotFoundException e )
-		{
-			rollbackQuickly();
-			throw new NotFoundException(
-				e.getMessage()
-			);
-		}
-		catch( SQLException e )
-		{
-			rollbackQuickly();
-			throw new DatabaseException(
-				e.getMessage()
+				sqlException.getMessage()
 			);
 		}
 		finally
 		{
 			try {
-
 				this.connection.setAutoCommit(true);
 			} catch ( SQLException e )
 			{
@@ -139,15 +141,39 @@ public	class	AuthorTitleServiceImplement implements AuthorTitleService
 		}
 	}
 
-	private	final	void	rollbackQuickly()
+	public final void	deleteAuthorCompletely( int authorId ) throws DatabaseException, NotFoundException
 	{
+		if ( authorId <= 0)
+			throw new IllegalArgumentException();
+
 		try
 		{
-			connection.rollback();
+			connection.setAutoCommit(false);
+			if ( authorRepository.findById(authorId).isEmpty() )
+				throw new NotFoundException( "Author id {"+ authorId +"} not found" );
+			List<Title>	listOfTitle = authorTitleRepository.findTitlesByAuthor(authorId);
+			for ( Title title : listOfTitle )
+				authorTitleRepository.removeRelation(authorId, title.getIsbn());
+			authorRepository.delete(authorId);
+			connection.commit();
 		}
-		catch ( SQLException rollbackException )
+		catch ( NotFoundException | DatabaseException exception )
 		{
-			rollbackException.printStackTrace();
+			rollbackQuickly();
+			throw exception;
+		}
+		catch ( SQLException sqlException )
+		{
+			rollbackQuickly();
+			throw new DatabaseException( sqlException.getMessage() );
+		}
+		finally
+		{
+			try {
+				connection.setAutoCommit(true);
+			} catch( SQLException sqlException ) {
+				sqlException.printStackTrace();
+			}
 		}
 	}
 }

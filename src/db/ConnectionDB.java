@@ -16,9 +16,9 @@ public class ConnectionDB {
 		{
 			if ( connection == null || connection.isClosed() ) {
 				connection = DriverManager.getConnection(
-					"jdbc:postgresql://localhost:5432/books",
-                    			"postgres",
-                    			"1q2w3e"
+					"jdbc:postgresql://ep-nameless-pond-asmg3kg0-pooler.c-4.eu-central-1.aws.neon.tech:5432/neondb?sslmode=require",
+    				"neondb_owner",
+    				"npg_mQFxMXDqC41f"
 				);
 			}
 			return connection;
